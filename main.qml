@@ -67,6 +67,9 @@ Window {
                 width: 20
                 delegate: Button {
                     text: "del"
+                    onClicked: {
+                        imgLoader.deleteImage(styleData.row)
+                    }
                 }
             }
             model: imgLoader.images
@@ -99,7 +102,9 @@ Window {
     FileDialog {
         id: folderFileDialog
         selectFolder: true
+        selectMultiple: true
         folder: shortcuts.home
+        onAccepted: imgLoader.searchFolder(folder)
     }
 
 

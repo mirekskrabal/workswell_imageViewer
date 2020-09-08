@@ -6,9 +6,7 @@ ImageLoader::ImageLoader(QObject *parent) : QObject(parent) {}
 
 QQmlListProperty<ImageMetaData> ImageLoader::images()
 {
-//    qDebug() << "returninaklsjf ";
     return QQmlListProperty<ImageMetaData>(this, m_images);
-    //return {this, m_images};
 }
 
 void ImageLoader::appendImage(QList<QUrl> files)
@@ -29,10 +27,15 @@ void ImageLoader::searchFolder(QUrl path)
     while (dirIt.hasNext()){
         dirIt.next();
         m_images.append(new ImageMetaData((QUrl(dirIt.filePath()))));
-        qDebug() << "test" << path.path();
-        qDebug() << dirIt.filePath();
     }
     emit imagesChanged();
+}
+
+void ImageLoader::deleteImage(int index)
+{
+    m_images.removeAt(index);
+    emit imagesChanged();
+//    qDebug() << "index is: " << index;
 }
 
 /*
