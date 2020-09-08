@@ -33,16 +33,14 @@ Window {
             LoadButton {
                 text: "<font color='#FFFFFF'>" + "Load img" + "</font>"
                 onClicked: {
-                    fileDialog.open()
+                    imageFileDialog.open()
                 }
             }
 
             LoadButton {
                 text: "<font color='#FFFFFF'>" + "Load folder" + "</font>"
                 onClicked: {
-                    fileDialog.selectFolder = true
-                    fileDialog.open()
-                    fileDialog.selectFolder = false
+                    folderFileDialog.open()
                 }
             }
 
@@ -58,15 +56,16 @@ Window {
                 role: "str"
                 title: "Image"
                 width: 170
-                delegate: TextArea {
-                    text: modelData.str
+                delegate: Text {
+                    width: parent.width
+                    text: modelData.name
                 }
             }
             TableViewColumn {
                 role: "closeButton"
                 title: ""
                 width: 20
-                delegate:Button {
+                delegate: Button {
                     text: "del"
                 }
             }
@@ -90,13 +89,18 @@ Window {
     }
 
     FileDialog {
-        id: fileDialog
+        id: imageFileDialog
         nameFilters: ["(*.jpg)"]
-        modality: Qt.WindowModal
         selectMultiple: true
         folder: shortcuts.home
         onAccepted: imgLoader.appendImage(fileUrls)
 
     }
+    FileDialog {
+        id: folderFileDialog
+        selectFolder: true
+        folder: shortcuts.home
+    }
+
 
 }
