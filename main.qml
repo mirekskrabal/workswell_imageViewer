@@ -55,13 +55,12 @@ Window {
             anchors.margins: 3
             clip: true
             TableViewColumn {
-                role: "Image"
+                role: "str"
                 title: "Image"
                 width: 170
-
-                  delegate: TextArea{
-                      text: StyleData.value
-                  }
+                delegate: TextArea {
+                    text: modelData.str
+                }
             }
             TableViewColumn {
                 role: "closeButton"
@@ -72,7 +71,7 @@ Window {
                 }
             }
             model: imgLoader.images
-            Connections{
+            Connections {
                 target: imgLoader
                 function onImagesChanged(){
                     imageButtons.model = imgLoader.images
