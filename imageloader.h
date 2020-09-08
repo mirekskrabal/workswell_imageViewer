@@ -20,7 +20,7 @@ signals:
 
 public slots:
     void appendImage(QList<QUrl> files);
-
+    void searchFolder(QUrl path);
 private:
    /*
     QString *imageAt(QQmlListProperty<QString *> *, int index);

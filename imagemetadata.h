@@ -13,6 +13,8 @@ class ImageMetaData : public QObject
 public:
     explicit ImageMetaData(QObject *parent = nullptr);
     ImageMetaData(QUrl &path) : m_path(path), m_name(path.fileName()){}
+    ImageMetaData(QUrl &&path) : m_path(path), m_name(path.fileName()){}
+
     QString name() {return m_name;}
 };
 

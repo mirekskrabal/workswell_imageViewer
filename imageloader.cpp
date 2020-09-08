@@ -1,5 +1,6 @@
-#include "imageloader.h"
 #include <qdebug.h>
+#include <qdiriterator.h>
+#include "imageloader.h"
 
 ImageLoader::ImageLoader(QObject *parent) : QObject(parent) {}
 
@@ -12,14 +13,24 @@ QQmlListProperty<ImageMetaData> ImageLoader::images()
 
 void ImageLoader::appendImage(QList<QUrl> files)
 {
-//    QString *tmpStr;
     ImageMetaData *tmpData;
     QList<QUrl>::iterator i;
     for (i = files.begin(); i != files.end(); ++i){
-        tmpData = new ImageMetaData((*i).toString());
-//        tmpData = new ImageMetaData(tmpStr);
+        tmpData = new ImageMetaData(*i);
         m_images.append(tmpData);
-        qDebug() << *i;
+    }
+    emit imagesChanged();
+}
+
+void ImageLoader::searchFolder(QUrl path)
+{
+    QStringList nameFilter("*.jpg");
+    QDirIterator dirIt(path.path(), nameFilter);
+    while (dirIt.hasNext()){
+        dirIt.next();
+        m_images.append(new ImageMetaData((QUrl(dirIt.filePath()))));
+        qDebug() << "test" << path.path();
+        qDebug() << dirIt.filePath();
     }
     emit imagesChanged();
 }
