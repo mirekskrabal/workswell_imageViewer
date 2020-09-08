@@ -1,22 +1,23 @@
 #include "imageloader.h"
+#include <qdebug.h>
 
-ImageLoader::ImageLoader(QObject *parent) : QObject(parent) {
-    QString *test1 = new QString("test1");
-    QString *test2 = new QString("test3");
-    QString *test3 = new QString("test2");
-    m_images.push_back(test1);
-    m_images.push_back(test2);
-    m_images.push_back(test3);
-}
+ImageLoader::ImageLoader(QObject *parent) : QObject(parent) {}
 
 QQmlListProperty<QString> ImageLoader::images()
 {
     return {this, m_images};
 }
 
-void ImageLoader::appendImage(QQmlListProperty<QString *> *, QString *item)
+void ImageLoader::appendImage(QList<QUrl> files)
 {
-    m_images.push_back(item);
+    QString *tmp;
+    QList<QUrl>::iterator i;
+    for (i = files.begin(); i != files.end(); ++i){
+        tmp = new QString((*i).toString());
+        m_images.append(tmp);
+        qDebug() << "i was signaled" << *i;
+    }
+    emit imagesChanged();
 }
 
 int ImageLoader::countImages(QQmlListProperty<QString *> *)

@@ -4,19 +4,23 @@
 #include <QObject>
 #include <QQmlListProperty>
 #include <QMetaType>
-#include <unordered_map>
+#include <QUrl>
 
 class ImageLoader : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QQmlListProperty<QString> images READ images)
+    Q_PROPERTY(QQmlListProperty<QString> images READ images NOTIFY imagesChanged)
 public:
     explicit ImageLoader(QObject *parent = nullptr);
     QQmlListProperty<QString> images();
+
 signals:
-    void foo();
+    void imagesChanged();
+
+public slots:
+    void appendImage(QList<QUrl> files);
+
 private:
-    void appendImage(QQmlListProperty<QString *> *, QString *item);
     QString *imageAt(QQmlListProperty<QString *> *, int index);
     void clearImages(QQmlListProperty<QString *> *);
     int countImages(QQmlListProperty<QString *> *);
