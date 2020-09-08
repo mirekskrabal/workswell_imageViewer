@@ -3,6 +3,7 @@ import QtQuick.Window 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.3
 import Qt.labs.platform 1.1
+import QtQuick.Controls 1.4
 
 
 Window {
@@ -42,6 +43,15 @@ Window {
         TableView{
             id: imageButtons;
             anchors.left: parent.left; anchors.top: loadButtons.bottom; anchors.right: parent.right
+            anchors.margins: 2
+            clip: true
+            TableViewColumn {
+
+            }
+            TableViewColumn {
+
+            }
+            model: libraryModel
 
         }
     }
