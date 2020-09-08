@@ -46,13 +46,23 @@ Window {
             anchors.margins: 2
             clip: true
             TableViewColumn {
-
+                  delegate: TextArea{
+                      text: StyleData.value
+                  }
             }
             TableViewColumn {
-
+                delegate:Button {
+                    text: "del"
+                }
             }
-            model: libraryModel
-
+            model: imgLoader.images
+            /*
+            Connections{
+                target: imgLoader
+                function onFoo(){
+                    imageButtons.model = imgLoader.images
+                }
+            }*/
         }
     }
     Rectangle {
