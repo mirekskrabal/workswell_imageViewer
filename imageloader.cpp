@@ -3,23 +3,28 @@
 
 ImageLoader::ImageLoader(QObject *parent) : QObject(parent) {}
 
-QQmlListProperty<QString> ImageLoader::images()
+QQmlListProperty<ImageMetaData> ImageLoader::images()
 {
-    return {this, m_images};
+//    qDebug() << "returninaklsjf ";
+    return QQmlListProperty<ImageMetaData>(this, m_images);
+    //return {this, m_images};
 }
 
 void ImageLoader::appendImage(QList<QUrl> files)
 {
-    QString *tmp;
+//    QString *tmpStr;
+    ImageMetaData *tmpData;
     QList<QUrl>::iterator i;
     for (i = files.begin(); i != files.end(); ++i){
-        tmp = new QString((*i).toString());
-        m_images.append(tmp);
-        qDebug() << "i was signaled" << *i;
+        tmpData = new ImageMetaData((*i).toString());
+//        tmpData = new ImageMetaData(tmpStr);
+        m_images.append(tmpData);
+        qDebug() << *i;
     }
-//    emit imagesChanged();
+    emit imagesChanged();
 }
 
+/*
 int ImageLoader::countImages(QQmlListProperty<QString *> *)
 {
     return m_images.count();
@@ -43,4 +48,4 @@ void ImageLoader::replaceImage(QQmlListProperty<QString *> *, int index, QString
 void ImageLoader::removeLastImage(QQmlListProperty<QString *> *)
 {
     m_images.pop_back();
-}
+}*/
