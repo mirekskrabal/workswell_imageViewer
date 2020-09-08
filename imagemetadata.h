@@ -2,16 +2,18 @@
 #define IMAGEMETADATA_H
 
 #include <QObject>
+#include <QUrl>
 
 class ImageMetaData : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString str READ str)
-    QString m_path;
+    Q_PROPERTY(QString name READ name)
+    QUrl m_path;
+    QString m_name;
 public:
-    QString str() {return m_path;}
     explicit ImageMetaData(QObject *parent = nullptr);
-    ImageMetaData(QString path) : m_path(path){}
+    ImageMetaData(QUrl &path) : m_path(path), m_name(path.fileName()){}
+    QString name() {return m_name;}
 };
 
 #endif // IMAGEMETADATA_H
