@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
 
-    qRegisterMetaType<QQmlListProperty<QString>>("QQmlListProperty<QString>");
+    //qRegisterMetaType<ImageMetaData>("ms",1,0,"ImageMetaData");
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
@@ -27,6 +27,9 @@ int main(int argc, char *argv[])
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
+
+    qmlRegisterType<ImageMetaData>("ms",1,0,"ImageMetaData");
+
     engine.load(url);
 
     return app.exec();
