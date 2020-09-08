@@ -39,6 +39,11 @@ Window {
 
             LoadButton {
                 text: "<font color='#FFFFFF'>" + "Load folder" + "</font>"
+                onClicked: {
+                    fileDialog.selectFolder = true
+                    fileDialog.open()
+                    fileDialog.selectFolder = false
+                }
             }
 
         }
@@ -80,12 +85,15 @@ Window {
         anchors.left: buttonPanel.right; anchors.right: parent.right; anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.margins: 15
+        border.color: "black"
+        border.width: 1
         color: "darkgrey"
     }
 
     FileDialog {
         id: fileDialog
         nameFilters: ["(*.jpg)"]
+        modality: Qt.WindowModal
         selectMultiple: true
         folder: shortcuts.home
         onAccepted: imgLoader.appendImage(fileUrls)
