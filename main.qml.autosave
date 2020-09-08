@@ -86,6 +86,7 @@ Window {
     FileDialog {
         id: fileDialog
         nameFilters: ["(*.jpg)"]
+        modality: Qt.WindowModal
         selectMultiple: true
         folder: shortcuts.home
         onAccepted: imgLoader.appendImage(fileUrls)

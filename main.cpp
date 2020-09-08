@@ -6,11 +6,15 @@
 
 int main(int argc, char *argv[])
 {
+
     qRegisterMetaType<QQmlListProperty<QString>>("QQmlListProperty<QString>");
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
+
+    app.setOrganizationName("workswell");
+    app.setOrganizationDomain("workswell");
 
     QQmlApplicationEngine engine;
 

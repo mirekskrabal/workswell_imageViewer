@@ -1,0 +1,57 @@
+* zadani ulohy
+  • Po zmacknuti tlačítka nacte jpeg obrazek (jeden nebo vice) pomoci file dialogu
+  • Zde vyberu jeden nebo vice snimku (multiuselect je aktivni) a provede se nacteni jpeg snimku do listu.
+  • List si bude pamatovat cestu k souboru a bude zobrazovat v grafice pouze jmeno – zde bude vhodne pouzit
+    QQmlListProperty a QProperty
+  • Druhe tlacitko otevre file dialog s moznosti nacteni pouze celych slozek
+  • Po nacteni cesty ke slozce, se prohleda slozka a nactou se do listu všechny jpeg snímky a promitnou se nactene
+  snímky do grafiky.
+
+Pozn.: Obrazky se budou nacitat do listu QQmlListProperty<>, v grafice bude zobrazeno jen jmeno a ne cela cesta.
+
+ • List bude mit dva sloupce, v jednom bude cisty text se jmenem a v druhem bude tlacitko, které po zmacknuti
+   smaze tento radek z listu
+ • Budou zde pouzity dva TableViewColumn, kde druhy bude ale delegovat na item a ToolButton.
+ • Nasledne se bude volat metoda pro smazani z listu na urcite pozici.
+ • Pomoci praveho tlačítka bude mozne vyvolat kontextove menu a zavrit všechny snímky.
+ • Zde bude jeden prvek, který smaze všechny elementy v listu.
+ • Po kliknuti na jmeno se mi obrazek nacte v graficke casti do image.
+ • Po vybrani Obrazku z listu se mi nacte do QImage, který muze byt implementovany jako extern
+ • Implementace QImageProvideru –do vlastní tridy.
+ • QImage se mi za pomoci ImageProvideru zobrazi v grafice v prvku Image.
+ • Bude mozne zmacknout tlacitko a vyvolat prezentaci (po urcite casove době se nacte další snímek z listu).
+   Bude mozne nastavit dobu, za kterou se budou snímky menit.
+ • Zde bude implementovany Timer, který se bude spoustet a zastavovat z graficke casti za pomoci tlačítek.
+ • Z graficke casti bude mozne nastavit cas ve vteřinách, kde po uplynuti doby se zavola urcity SLOT timeru.
+ • Po zavolani metody ve SLOTu se v graficke casti zobrazi další obrazek ze seznamu
+ • Priblizovani a odalovani obrazku za pomoci kolecka.
+ • Implementace pouziti mysi pro ovladani obrazku, hlavne priblizovani a oddalovani za pomoci kolecka mysi.
+ • Pomoci dvou tlačítek bude mozne obrazek rotovat o 90 stupnu doprava ci doleva
+
+Zdroje
+qt quick: https://doc.qt.io/qt-5/qtquick-index.html
+qml: https://doc.qt.io/qt-5/qtqml-index.html
+integrace qt a qml: https://doc.qt.io/qt-5/qtqml-cppintegration-topic.html
+signaly a sloty: https://doc.qt.io/qt-5/signalsandslots.html
+list property: https://doc.qt.io/qt-5/qtqml-referenceexamples-properties-example.html
+image provider: https://doc.qt.io/qt-5/qquickimageprovider.html
+
+** dotazy k zadani
+   pouzivat list? - mazani ze zacatku listu
+   nasledne se bude volat metoda pro smazani z listu - nasledne po cem
+   pomoci praveho tlacitka bude mozne vyvolat kontextove menu - zavrit
+   vsechny snimky
+   
+
+** signals and slots
+   signals are emitted by an object when is internal state has changed in some way that might be interesting
+   slot is called when a signal connected to it is emitted
+   to the object's client or owner
+   qt's singlas and slots mechanism esures that if you connect a signal to a slov, the slot will be called with
+   the signal's parameters at the right time
+   all classes that inherit from QObject or it's subclasses can contani signals and slots
+   objects do not know whether anything receives its singlas, a slot does not know if it has any signals
+   connected to it
+   execution of the code following the emit statement will occur once all slots have returned
+   signal emitted from an instance of an arbitrary class can cause a private slot to be invoked in an instance
+   of an urelated class

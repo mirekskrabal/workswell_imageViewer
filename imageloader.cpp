@@ -17,7 +17,7 @@ void ImageLoader::appendImage(QList<QUrl> files)
         m_images.append(tmp);
         qDebug() << "i was signaled" << *i;
     }
-    emit imagesChanged();
+//    emit imagesChanged();
 }
 
 int ImageLoader::countImages(QQmlListProperty<QString *> *)
