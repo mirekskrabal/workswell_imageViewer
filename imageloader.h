@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QQmlListProperty>
+#include <QMetaType>
 #include <unordered_map>
 
 class ImageLoader : public QObject
@@ -13,14 +14,14 @@ public:
     explicit ImageLoader(QObject *parent = nullptr);
     QQmlListProperty<QString> images();
 signals:
+    void foo();
 private:
-    void appendImage(QString*);
-    int imageCount();
-    QString *image(int);
-    void clearImages();
-    void replaceImage(int, QString*);
-    void removeLastImage();
-
+    void appendImage(QQmlListProperty<QString *> *, QString *item);
+    QString *imageAt(QQmlListProperty<QString *> *, int index);
+    void clearImages(QQmlListProperty<QString *> *);
+    int countImages(QQmlListProperty<QString *> *);
+    void removeLastImage(QQmlListProperty<QString *> *);
+    void replaceImage(QQmlListProperty<QString *> *, int index, QString *item);
     QList<QString *> m_images;
 };
 
