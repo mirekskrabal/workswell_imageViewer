@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.3
 import Qt.labs.platform 1.1
 import QtQuick.Controls 1.4
+import QtQuick.Dialogs 1.3
+
 
 
 Window {
@@ -40,29 +42,36 @@ Window {
 
         }
 
-        TableView{
+        TableView {
             id: imageButtons;
             anchors.left: parent.left; anchors.top: loadButtons.bottom; anchors.right: parent.right
-            anchors.margins: 2
+            anchors.bottom: parent.bottom
+            anchors.margins: 3
             clip: true
             TableViewColumn {
+                role: "Image"
+                title: "Image"
+                width: 170
+
                   delegate: TextArea{
                       text: StyleData.value
                   }
             }
             TableViewColumn {
+                role: "closeButton"
+                title: ""
+                width: 20
                 delegate:Button {
                     text: "del"
                 }
             }
             model: imgLoader.images
-            /*
             Connections{
                 target: imgLoader
-                function onFoo(){
+                function onImagesChanged(){
                     imageButtons.model = imgLoader.images
                 }
-            }*/
+            }
         }
     }
     Rectangle {
@@ -77,8 +86,10 @@ Window {
 
     FileDialog {
         id: fileDialog
-        currentFile: document.source
-        folder: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+        selectMultiple: true
+        folder: StandardPaths.writableLocation(StandardPaths.HomeLocation)
+        onAccepted: imgLoader.appendImage(fileUrls)
+
     }
 
 }
