@@ -1,15 +1,15 @@
 #include <qdebug.h>
 #include <qdiriterator.h>
-#include "imageloader.h"
+#include "imagedatabase.h"
 
-ImageLoader::ImageLoader(QObject *parent) : QObject(parent), m_images(QList<ImageMetaData *>()){}
+ImageDatabase::ImageDatabase(QObject *parent) : QObject(parent), m_images(QList<ImageMetaData *>()){}
 
-QQmlListProperty<ImageMetaData> ImageLoader::images()
+QQmlListProperty<ImageMetaData> ImageDatabase::images()
 {
     return QQmlListProperty<ImageMetaData>(this, m_images);
 }
 
-void ImageLoader::appendImage(QList<QUrl> files)
+void ImageDatabase::appendImage(QList<QUrl> files)
 {
     ImageMetaData *tmpData;
     QList<QUrl>::iterator i;
@@ -20,7 +20,7 @@ void ImageLoader::appendImage(QList<QUrl> files)
     emit imagesChanged();
 }
 
-void ImageLoader::searchFolder(QUrl path)
+void ImageDatabase::searchFolder(QUrl path)
 {
     QStringList nameFilter("*.jpg");
     QDirIterator dirIt(path.path(), nameFilter);
@@ -31,41 +31,20 @@ void ImageLoader::searchFolder(QUrl path)
     emit imagesChanged();
 }
 
-void ImageLoader::deleteImage(int index)
+void ImageDatabase::deleteImage(int index)
 {
     m_images.removeAt(index);
     emit imagesChanged();
-    //    qDebug() << "index is: " << index;
 }
 
-void ImageLoader::clearImages()
+void ImageDatabase::clearImages()
 {
     m_images.clear();
     emit imagesChanged();
 }
 
-/*
-int ImageLoader::countImages(QQmlListProperty<QString *> *)
+void ImageDatabase::createImage(int index)
 {
-    return m_images.count();
+    sendImage(QImage(m_images.at(index)->url().path(), ".jpg"));
 }
 
-QString *ImageLoader::imageAt(QQmlListProperty<QString *> *, int index)
-{
-    return m_images.at(index);
-}
-
-void ImageLoader::clearImages(QQmlListProperty<QString *> *)
-{
-    m_images.clear();
-}
-
-void ImageLoader::replaceImage(QQmlListProperty<QString *> *, int index, QString *item)
-{
-    m_images[index] = item;
-}
-
-void ImageLoader::removeLastImage(QQmlListProperty<QString *> *)
-{
-    m_images.pop_back();
-}*/
