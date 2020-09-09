@@ -2,9 +2,8 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QObject>
-#include <imagedatabase.h>
-#include "imageprovider.h"
-
+#include "imagedatabase.h"
+#include "presentationtimer.h"
 int main(int argc, char *argv[])
 {
 
@@ -22,17 +21,22 @@ int main(int argc, char *argv[])
     QQmlContext* context(engine.rootContext());
 
     ImageDatabase imgDb;// = new ImageDatabase();
-    ImageProvider imgProv;// = new ImageProvider();
+    PresentationTimer timer;
 
     context->setContextProperty("imgDatabase", &imgDb);
-    context->setContextProperty("imgProvider", &imgProv);
+    context->setContextProperty("timer", &timer);
+
+    QObject::connect(&imgDb, &ImageDatabase::indexChanged,
+                     &timer, &PresentationTimer::onIndexChanged);
+
+    QObject::connect(&timer.m_timer, &QTimer::timeout,
+                     &timer, &PresentationTimer::onNotified);
+
+    QObject::connect(&timer, &PresentationTimer::displayAnotherImg,
+                     &imgDb, &ImageDatabase::setIndex);
 
     //add custom image provider
-    engine.addImageProvider(QLatin1String("provider"), &imgProv);
-
-    //connect image databse and image provider
-    QObject::connect(&imgDb, &ImageDatabase::sendImage,
-                     &imgProv, &ImageProvider::recvImg);
+    engine.addImageProvider(QLatin1String("provider"), &imgDb);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
