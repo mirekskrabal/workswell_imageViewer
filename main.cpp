@@ -1,8 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <imageloader.h>
-//#include <QQmlListProperty>
+#include <imagedatabase.h>
+#include "imageprovider.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,7 +19,18 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     QQmlContext* context(engine.rootContext());
-    context->setContextProperty("imgLoader", new ImageLoader());
+
+    ImageDatabase *imgDb = new ImageDatabase();
+    ImageProvider *imgProv = new ImageProvider();
+
+    context->setContextProperty("imgDatabse", imgDb);
+
+    //add custom image provider
+    engine.addImageProvider(QLatin1String("provider"), imgProv);
+
+    //connect image databse and image provider
+    QObject::connect(imgDb, &ImageDatabase::sendImage,
+                      imgProv, &ImageProvider::recvImg);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
