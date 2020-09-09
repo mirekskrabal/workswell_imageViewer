@@ -5,20 +5,27 @@
 #include <QQmlListProperty>
 #include <QMetaType>
 #include <QUrl>
+#include <QQuickImageProvider>
 #include <QImage>
 #include "imagemetadata.h"
 
-class ImageDatabase : public QObject
+class ImageDatabase : public QObject, public QQuickImageProvider
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<ImageMetaData> images READ images NOTIFY imagesChanged)
+    QImage m_img;
+    QList<ImageMetaData *> m_images;
+    size_t listIndex;
 public:
     explicit ImageDatabase(QObject *parent = nullptr);
     QQmlListProperty<ImageMetaData> images();
 
+    QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize) override;
 signals:
+    //emited when new image files are added to the list
     void imagesChanged();
-    void sendImage(QImage &image);
+    //emited when button to view an image was clicked
+    void indexChanged();
 
 public slots:
     //creates imagemetadata objects from given urls in list and appends to m_images
@@ -30,10 +37,7 @@ public slots:
     //clears whole m_images lis
     void clearImages();
     //creates qimage and emits sendImage signal
-    void createImage(int index);
-private:
-    QImage m_img;
-    QList<ImageMetaData *> m_images;
+    void setIndex(int index);
 };
 
 #endif // IMAGELOADER_H

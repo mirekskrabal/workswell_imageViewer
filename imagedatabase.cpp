@@ -2,11 +2,21 @@
 #include <qdiriterator.h>
 #include "imagedatabase.h"
 
-ImageDatabase::ImageDatabase(QObject *parent) : QObject(parent), m_images(QList<ImageMetaData *>()){}
+ImageDatabase::ImageDatabase(QObject *parent) : QObject(parent),
+                                                QQuickImageProvider(QQuickImageProvider::Image),
+                                                m_images(QList<ImageMetaData *>()){}
 
 QQmlListProperty<ImageMetaData> ImageDatabase::images()
 {
     return QQmlListProperty<ImageMetaData>(this, m_images);
+}
+
+QImage ImageDatabase::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
+{
+    if (listIndex < m_images.length()){
+        m_img = QImage(m_images.at(listIndex)->url().path(), ".jpg");
+    }
+    return m_img;
 }
 
 void ImageDatabase::appendImage(QList<QUrl> files)
@@ -43,10 +53,11 @@ void ImageDatabase::clearImages()
     emit imagesChanged();
 }
 
-void ImageDatabase::createImage(int index)
+void ImageDatabase::setIndex(int index)
 {
     qDebug() << "creating image on index: " << index;
-    m_img = QImage(m_images.at(index)->url().path(), ".jpg");
-    emit sendImage(m_img);
+//    m_img = QImage(m_images.at(index)->url().path(), ".jpg");
+    listIndex = index;
+    emit indexChanged();
 }
 
