@@ -12,9 +12,9 @@ QQmlListProperty<ImageMetaData> ImageDatabase::images()
     return QQmlListProperty<ImageMetaData>(this, m_images);
 }
 
-QImage ImageDatabase::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
+QImage ImageDatabase::requestImage(const QString &, QSize *, const QSize &requested)
 {
-    if (listIndex < m_images.length() && listIndex > 0){
+    if (listIndex < m_images.length() && listIndex >= 0 && !m_images.empty()){
         m_img = QImage(m_images.at(listIndex)->url().path(), ".jpg");
     }
     return m_img;
@@ -56,9 +56,7 @@ void ImageDatabase::clearImages()
 
 void ImageDatabase::setIndex(int index)
 {
-    qDebug() << "creating image on index: " << index;
-//    m_img = QImage(m_images.at(index)->url().path(), ".jpg");
     listIndex = index;
-    emit indexChanged();
+    emit indexChanged(index);
 }
 

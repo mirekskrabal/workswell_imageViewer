@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     QObject::connect(&imgDb, &ImageDatabase::indexChanged,
                      &timer, &PresentationTimer::onIndexChanged);
 
-    QObject::connect(&timer.m_timer, &QTimer::timeout,
+    QObject::connect(timer.m_timer, &QTimer::timeout,
                      &timer, &PresentationTimer::onNotified);
 
     QObject::connect(&timer, &PresentationTimer::displayAnotherImg,

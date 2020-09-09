@@ -40,6 +40,7 @@ Window {
                 text: "<font color='#FFFFFF'>" + "Presentation" + "</font>"
                 onClicked: {
                     presentationButtons.visible = !presentationButtons.visible
+                    timer.toggleIsRunning()
                 }
             }
         }
@@ -52,22 +53,26 @@ Window {
             LoadButton {
                 text: "<font color='#FFFFFF'>" + "Start" + "</font>"
                 onClicked: {
-                    folderFileDialog.open()
+                    console.log("number of rows from qml: " + imageNameTable.rowCount)
+                    timer.startTimer(imageNameTable.rowCount)
                 }
             }
             LoadButton {
                 text: "<font color='#FFFFFF'>" + "Stop" + "</font>"
                 onClicked: {
-                    folderFileDialog.open()
+                    timer.pauseTimer();
                 }
             }
             LoadButton{
                 TextField {
                     id: txtInput
-                    width: 2*parent.width/5
+                    width: 3*parent.width/5
                     anchors.verticalCenter: parent.verticalCenter
-                    placeholderText: qsTr("Time:")
+                    placeholderText: qsTr("Time(s):")
+                    validator: IntValidator {bottom: 1; top: 1000}
                     Keys.onReturnPressed: {
+                        timer.startTimer(imageNameTable.rowCount, parseInt(text))
+                        text = ""
                     }
                 }
             }
@@ -87,7 +92,7 @@ Window {
         }
         TableViewColumn {
             role: "str"
-            title: "Image"
+            title: "Image Name:"
             width: 170
             delegate: Button {
                 width: parent.width
@@ -112,7 +117,7 @@ Window {
         Connections {
             target: imgDatabase
             function onImagesChanged(){
-                imageButtons.model = imgDatabase.images
+                imageNameTable.model = imgDatabase.images
             }
         }
     }
@@ -168,5 +173,4 @@ Window {
             onTriggered: imgDatabase.clearImages()
         }
     }
-
 }

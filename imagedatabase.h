@@ -15,8 +15,11 @@ class ImageDatabase : public QObject, public QQuickImageProvider
     Q_PROPERTY(QQmlListProperty<ImageMetaData> images READ images NOTIFY imagesChanged)
     QImage m_img;
     QList<ImageMetaData *> m_images;
+    //stores index of image which should be displayed
     int listIndex;
+    //stores width of image which should be displayed
     int imgWidth;
+    //stores height of image which should be displayed
     int imgHeight;
 public:
     explicit ImageDatabase(QObject *parent = nullptr);
@@ -27,7 +30,7 @@ signals:
     //emited when new image files are added to the list
     void imagesChanged();
     //emited when button to view an image was clicked
-    void indexChanged();
+    void indexChanged(int index);
 
 public slots:
     //creates imagemetadata objects from given urls in list and appends to m_images
@@ -36,9 +39,9 @@ public slots:
     void searchFolder(QUrl path);
     //deletes imagemetadata object from list by given index
     void deleteImage(int index);
-    //clears whole m_images lis
+    //clears whole m_images list
     void clearImages();
-    //creates qimage and emits sendImage signal
+    //sets index of image which should be displayed
     void setIndex(int index);
 };
 
