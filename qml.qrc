@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>LoadButton.qml</file>
+        <file>ImagePane.qml</file>
+        <file>ImageNameList.qml</file>
     </qresource>
 </RCC>

@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     ImageProvider imgProv;// = new ImageProvider();
 
     context->setContextProperty("imgDatabase", &imgDb);
+    context->setContextProperty("imgProvider", &imgProv);
 
     //add custom image provider
     engine.addImageProvider(QLatin1String("provider"), &imgProv);

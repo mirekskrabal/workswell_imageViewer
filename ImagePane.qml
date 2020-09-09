@@ -11,8 +11,9 @@ Rectangle {
     Image {
         id: displayedImage
         //actuall file is provided by a signal from image database
-        source: "image://provider/something"
-        cache: false
+        fillMode: Image.PreserveAspectFit
+        source: "image://provider/foo"
+//        cache: false
         function reload() {
             var oldSource = source;
             source = "";

@@ -42,24 +42,3 @@ image provider: https://doc.qt.io/qt-5/qquickimageprovider.html
    pomoci praveho tlacitka bude mozne vyvolat kontextove menu - zavrit
    vsechny snimky
    
-
-** signals and slots
-   signals are emitted by an object when is internal state has changed in some way that might be interesting
-   slot is called when a signal connected to it is emitted
-   to the object's client or owner
-   qt's singlas and slots mechanism esures that if you connect a signal to a slov, the slot will be called with
-   the signal's parameters at the right time
-   all classes that inherit from QObject or it's subclasses can contani signals and slots
-   objects do not know whether anything receives its singlas, a slot does not know if it has any signals
-   connected to it
-   execution of the code following the emit statement will occur once all slots have returned
-   signal emitted from an instance of an arbitrary class can cause a private slot to be invoked in an instance
-   of an urelated class
-
-** DONE nacitani ze slozky
-** DONE odstraneni z table view
-** DONE fix non-NOTIFYable
-** TODO fix scrollbar over buttons
-
-** conections
-   

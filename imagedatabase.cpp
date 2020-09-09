@@ -45,6 +45,8 @@ void ImageDatabase::clearImages()
 
 void ImageDatabase::createImage(int index)
 {
-    sendImage(QImage(m_images.at(index)->url().path(), ".jpg"));
+    qDebug() << "creating image on index: " << index;
+    m_img = QImage(m_images.at(index)->url().path(), ".jpg");
+    emit sendImage(m_img);
 }
 

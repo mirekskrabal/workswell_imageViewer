@@ -18,7 +18,7 @@ public:
 
 signals:
     void imagesChanged();
-    void sendImage(QImage &&image);
+    void sendImage(QImage &image);
 
 public slots:
     //creates imagemetadata objects from given urls in list and appends to m_images
@@ -32,7 +32,7 @@ public slots:
     //creates qimage and emits sendImage signal
     void createImage(int index);
 private:
-
+    QImage m_img;
     QList<ImageMetaData *> m_images;
 };
 

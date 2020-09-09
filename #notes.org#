@@ -15,10 +15,10 @@ Pozn.: Obrazky se budou nacitat do listu QQmlListProperty<>, v grafice bude zobr
  • Nasledne se bude volat metoda pro smazani z listu na urcite pozici.
  • Pomoci praveho tlačítka bude mozne vyvolat kontextove menu a zavrit všechny snímky.
  • Zde bude jeden prvek, který smaze všechny elementy v listu.
- • Po kliknuti na jmeno se mi obrazek nacte v graficke casti do image.
- • Po vybrani Obrazku z listu se mi nacte do QImage, který muze byt implementovany jako extern
- • Implementace QImageProvideru –do vlastní tridy.
- • QImage se mi za pomoci ImageProvideru zobrazi v grafice v prvku Image.
+ • *Po kliknuti na jmeno se mi obrazek nacte v graficke casti do image.*
+ • *Po vybrani Obrazku z listu se mi nacte do QImage, který muze byt implementovany jako extern*
+ • *Implementace QImageProvideru –do vlastní tridy.*
+ • *QImage se mi za pomoci ImageProvideru zobrazi v grafice v prvku Image.*
  • Bude mozne zmacknout tlacitko a vyvolat prezentaci (po urcite casove době se nacte další snímek z listu).
    Bude mozne nastavit dobu, za kterou se budou snímky menit.
  • Zde bude implementovany Timer, který se bude spoustet a zastavovat z graficke casti za pomoci tlačítek.
@@ -55,3 +55,21 @@ image provider: https://doc.qt.io/qt-5/qquickimageprovider.html
    execution of the code following the emit statement will occur once all slots have returned
    signal emitted from an instance of an arbitrary class can cause a private slot to be invoked in an instance
    of an urelated class
+   
+
+  
+* TODOES 8.9
+** DONE nacitani ze slozky
+** DONE odstraneni z table view
+** DONE fix non-NOTIFYable
+
+* TODOES 9.9
+** TODO fix scrollbar over buttons
+** DONE close all buttons using context menu
+   vyvolat kontextove menu, tam odsouhlasit zavreni vsech obrazku
+   zavolat slot v imageProvideru, ktery vymaze vsechny prvky z listu a emituje signal, aby se refreshnul
+   model v table view
+** TODO load image when clicked on image name
+   vyvolat obrazek do graficke casti, pote co je v listu kliknuto na jeho jmeno
+   v image database vytvorim qimage z daneho url, tento pomoci signalu poslu do image provideru, ktery zajisti
+   zobrazeni v ui
