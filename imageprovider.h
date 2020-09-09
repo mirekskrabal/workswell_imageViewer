@@ -3,15 +3,18 @@
 
 #include <QQuickImageProvider>
 #include <QImage>
+#include <QObject>
 #include <QUrl>
 
-class ImageProvider : public QQuickImageProvider
+class ImageProvider : public QObject, public QQuickImageProvider
 {
+    Q_OBJECT
     QImage m_image;
 public:
-    ImageProvider();
+    explicit ImageProvider(QObject *parent = nullptr);
+    virtual ~ImageProvider() {};
 public slots:
-    void recvImg(QImage &&image);
+    void recvImg(QImage &image);
 };
 
 #endif // IMAGEPROVIDER_H

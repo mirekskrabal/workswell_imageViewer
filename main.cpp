@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QObject>
 #include <imagedatabase.h>
 #include "imageprovider.h"
 
@@ -20,17 +21,17 @@ int main(int argc, char *argv[])
 
     QQmlContext* context(engine.rootContext());
 
-    ImageDatabase *imgDb = new ImageDatabase();
-    ImageProvider *imgProv = new ImageProvider();
+    ImageDatabase imgDb;// = new ImageDatabase();
+    ImageProvider imgProv;// = new ImageProvider();
 
-    context->setContextProperty("imgDatabse", imgDb);
+    context->setContextProperty("imgDatabase", &imgDb);
 
     //add custom image provider
-    engine.addImageProvider(QLatin1String("provider"), imgProv);
+    engine.addImageProvider(QLatin1String("provider"), &imgProv);
 
     //connect image databse and image provider
-    QObject::connect(imgDb, &ImageDatabase::sendImage,
-                      imgProv, &ImageProvider::recvImg);
+    QObject::connect(&imgDb, &ImageDatabase::sendImage,
+                     &imgProv, &ImageProvider::recvImg);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
