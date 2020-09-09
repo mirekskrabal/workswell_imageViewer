@@ -22,6 +22,7 @@ public slots:
     void appendImage(QList<QUrl> files);
     void searchFolder(QUrl path);
     void deleteImage(int index);
+    void clearImages();
 private:
    /*
     QString *imageAt(QQmlListProperty<QString *> *, int index);

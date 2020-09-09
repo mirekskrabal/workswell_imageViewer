@@ -52,6 +52,13 @@ Window {
             anchors.bottom: parent.bottom
             anchors.margins: 3
             clip: true
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.RightButton
+                onClicked: {
+                    contextMenu.popup()
+                }
+            }
             TableViewColumn {
                 role: "str"
                 title: "Image"
@@ -106,6 +113,12 @@ Window {
         folder: shortcuts.home
         onAccepted: imgLoader.searchFolder(folder)
     }
-
+    Menu {
+        id: contextMenu
+        MenuItem {
+            text: qsTr('Delete all');
+            onTriggered: imgLoader.clearImages()
+        }
+    }
 
 }

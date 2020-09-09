@@ -2,7 +2,7 @@
 #include <qdiriterator.h>
 #include "imageloader.h"
 
-ImageLoader::ImageLoader(QObject *parent) : QObject(parent) {}
+ImageLoader::ImageLoader(QObject *parent) : QObject(parent), m_images(QList<ImageMetaData *>()){}
 
 QQmlListProperty<ImageMetaData> ImageLoader::images()
 {
@@ -35,7 +35,13 @@ void ImageLoader::deleteImage(int index)
 {
     m_images.removeAt(index);
     emit imagesChanged();
-//    qDebug() << "index is: " << index;
+    //    qDebug() << "index is: " << index;
+}
+
+void ImageLoader::clearImages()
+{
+    m_images.clear();
+    emit imagesChanged();
 }
 
 /*
