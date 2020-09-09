@@ -12,16 +12,17 @@ class PresentationTimer : public QObject
     //when prestimer is created isRunning is false, then it is switched on and off by clicking
     //on Presentation button
     bool m_isRunning;
+    int m_numOfItems;
 public:
     explicit PresentationTimer(QObject *parent = nullptr);
-    QTimer m_timer;
+    QTimer *m_timer;
 signals:
     //notifies database about which img should be displayed
     void displayAnotherImg(int index);
 public slots:
     //to be able to continue with next image to the one which is currently beeing displayed
     void onIndexChanged(int index);
-    void startTimer(int items = 0, int sec = 5);
+    void startTimer(int items = 0, int sec = 3);
     //toggle timer off
     void toggleIsRunning();
     //notified by timer to change an image
