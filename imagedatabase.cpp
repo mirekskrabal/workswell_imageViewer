@@ -1,5 +1,6 @@
 #include <qdebug.h>
 #include <qdiriterator.h>
+#include <qsize.h>
 #include "imagedatabase.h"
 
 ImageDatabase::ImageDatabase(QObject *parent) : QObject(parent),
@@ -13,7 +14,7 @@ QQmlListProperty<ImageMetaData> ImageDatabase::images()
 
 QImage ImageDatabase::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
-    if (listIndex < m_images.length()){
+    if (listIndex < m_images.length() && listIndex > 0){
         m_img = QImage(m_images.at(listIndex)->url().path(), ".jpg");
     }
     return m_img;

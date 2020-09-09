@@ -15,7 +15,9 @@ class ImageDatabase : public QObject, public QQuickImageProvider
     Q_PROPERTY(QQmlListProperty<ImageMetaData> images READ images NOTIFY imagesChanged)
     QImage m_img;
     QList<ImageMetaData *> m_images;
-    size_t listIndex;
+    int listIndex;
+    int imgWidth;
+    int imgHeight;
 public:
     explicit ImageDatabase(QObject *parent = nullptr);
     QQmlListProperty<ImageMetaData> images();

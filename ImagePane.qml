@@ -10,19 +10,19 @@ Rectangle {
     color: "darkgrey"
     Image {
         id: displayedImage
-        //actuall file is provided by a signal from image database
+        width: parent.width
+        height: parent.height
         fillMode: Image.PreserveAspectFit
         source: "image://provider/foo"
-//        cache: false
+        cache: false
         function reload() {
             var oldSource = source;
             source = "";
             source = oldSource;
         }
         Connections {
-            target: imgProvider
-            function onImageUpdated(){
-                console.log("Image was updated")
+            target: imgDatabase
+            function onIndexChanged() {
                 displayedImage.reload()
             }
         }
