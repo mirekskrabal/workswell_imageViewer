@@ -1,10 +1,14 @@
 #include "presentationtimer.h"
 #include <qdebug.h>
 
-PresentationTimer::PresentationTimer(QObject *parent) : QObject(parent), m_timer(new QTimer(this))
-{
-
-}
+PresentationTimer::PresentationTimer(QObject *parent) : QObject(parent),
+                                                        m_index(-1),
+                                                        m_isRunning(false),
+                                                        m_numOfItems(-1),
+                                                        m_wasStopped(false),
+                                                        m_imageStay(0),
+                                                        m_timeRemaining(0),
+                                                        m_timer(new QTimer(this)){}
 
 void PresentationTimer::onIndexChanged(int index)
 {
@@ -13,11 +17,14 @@ void PresentationTimer::onIndexChanged(int index)
 
 void PresentationTimer::startTimer(int items, int sec)
 {
-    qDebug() << "second: " << sec;
-    if (!m_isRunning) {
+    if (!m_isRunning && items > 0) {
+        if (m_index == -1){
+            //no img is beeing viewed -> emit signal to view the first one
+            emit displayAnotherImg(0);
+        }
         m_numOfItems = items;
         m_imageStay = sec * 1000;
-        m_timer->setInterval(sec * 1000);
+        m_timer->setInterval(m_imageStay);
         m_timer->start();
         m_isRunning = true;
     }
@@ -45,7 +52,7 @@ void PresentationTimer::onNotified()
         m_timer->start();
         m_wasStopped = false;
     }
-    if (m_index == m_numOfItems - 1){
+    if (m_index == m_numOfItems - 1 || m_index == -1){
         m_index = 0;
     }
     else {
@@ -56,7 +63,9 @@ void PresentationTimer::onNotified()
 
 void PresentationTimer::pauseTimer()
 {
-    m_timeRemaining = m_timer->remainingTime();
-    m_timer->stop();
-    m_wasStopped = true;
+    if (m_isRunning && !m_wasStopped) {
+        m_timeRemaining = m_timer->remainingTime();
+        m_timer->stop();
+        m_wasStopped = true;
+    }
 }
