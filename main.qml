@@ -1,12 +1,11 @@
 import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.3
 import Qt.labs.platform 1.1
 import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.3
 import QtQuick.Controls 2.14
-
+import QtQuick.Controls.Styles 1.4
 
 Window {
     id: imageViewerWindow
@@ -14,7 +13,9 @@ Window {
     height: 480
     visible: true
     title: qsTr("Image Viewer")
-    color: "grey"
+    color: "#3a4055"
+    minimumWidth: 640
+    minimumHeight: 480
     Rectangle{
         id: buttonPanel
         height: 30
@@ -22,10 +23,11 @@ Window {
         visible: true
         color: "dimgrey"
         RowLayout {
-            id: loadButtons
+            id: controlButtons
             anchors.left: parent.left; anchors.top: parent.top; anchors.right: parent.horizontalCenter
             anchors.bottom: parent.bottom
             spacing: 0
+            property bool presentationOn: false
             LoadButton {
                 text: "<font color='#FFFFFF'>" + "Load img" + "</font>"
                 onClicked: {
@@ -43,19 +45,19 @@ Window {
                 onClicked: {
                     presentationButtons.visible = !presentationButtons.visible
                     timer.toggleIsRunning()
+                    controlButtons.presentationOn = !controlButtons.presentationOn
                 }
             }
         }
         RowLayout {
             id: presentationButtons
             visible: false
-            anchors.left: loadButtons.right; anchors.top: parent.top; anchors.right: parent.right
+            anchors.left: controlButtons.right; anchors.top: parent.top; anchors.right: parent.right
             anchors.bottom: parent.bottom
             spacing: 0
             LoadButton {
                 text: "<font color='#FFFFFF'>" + "Start" + "</font>"
                 onClicked: {
-                    console.log("number of rows from qml: " + imageNameTable.rowCount)
                     timer.startTimer(imageNameTable.rowCount)
                 }
             }
@@ -67,9 +69,8 @@ Window {
             }
             LoadButton{
                 TextField {
-                    id: txtInput
-                    width: 3*parent.width/5
-                    anchors.verticalCenter: parent.verticalCenter
+                    height: parent.height
+                    width: 2*parent.width/3
                     placeholderText: qsTr("Time(s):")
                     validator: IntValidator {bottom: 1; top: 1000}
                     Keys.onReturnPressed: {
@@ -85,6 +86,7 @@ Window {
         anchors.left: parent.left; anchors.top: buttonPanel.bottom; anchors.bottom: parent.bottom
         anchors.margins: 3
         clip: true
+        width: 202
         MouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.RightButton
@@ -92,26 +94,64 @@ Window {
                 contextMenu.popup()
             }
         }
+
+        style: TableViewStyle {
+            headerDelegate: Rectangle {
+                height: textItem.implicitHeight * 1.2
+                width: textItem.implicitWidth
+                color: "lightsteelblue"
+                Text {
+                    id: textItem
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: styleData.textAlignment
+                    anchors.leftMargin: 12
+                    text: styleData.value
+                    elide: Text.ElideRight
+                    color: textColor
+                    renderType: Text.NativeRendering
+                }
+                Rectangle {
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 1
+                    anchors.topMargin: 1
+                    width: 1
+                    color: "#ccc"
+                }
+            }
+        }
         TableViewColumn {
             role: "str"
             title: "Image Name:"
-            width: 170
+            width: 160
             delegate: LoadButton {
                 width: parent.width
                 text: modelData.name
+                palette {
+                    button: "white"
+                }
                 onClicked: {
-                    imgDatabase.setIndex(styleData.row)
+                    if (!controlButtons.presentationOn) {
+                        imgDatabase.setIndex(styleData.row)
+                    }
                 }
             }
         }
         TableViewColumn {
             role: "closeButton"
             title: "Del"
-            width: 20
+            width: 40
             delegate: LoadButton {
-                text: "del"
+                text: "x"
+                palette {
+                    button: "white"
+                }
                 onClicked: {
-                    imgDatabase.deleteImage(styleData.row)
+                    if (!controlButtons.presentationOn) {
+                        imgDatabase.deleteImage(styleData.row)
+                    }
                 }
             }
         }
@@ -132,51 +172,44 @@ Window {
         anchors.margins: 15
         color: "black"
         clip: true
-        Flickable {
-            id: flick
-            anchors.fill: parent
-            boundsBehavior: Flickable.StopAtBounds
-            boundsMovement: Flickable.StopAtBounds
-            Image {
-                id: image
-                width: parent.width
-                height: parent.height
-                anchors.margins: 2
-                fillMode: Image.PreserveAspectFit
-                //actual image is loaded from list via index provided by coresponding button - not using file name
-                source: "image://provider/foo"
-                cache: false
-                //source needs to be reloaded once it is changed on backend
-                property bool sourceSwitch: true
-                function reload() {
-                    if (sourceSwitch) {
-                        sourceSwitch = false
-                        source = "image://provider/foobar"
-                    }
-                    else {
-                        sourceSwitch = true
-                        source = "image://provider/foo"
-                    }
+        Image {
+            id: image
+            width: parent.width
+            height: parent.height
+//            anchors.margins: 2
+            fillMode: Image.PreserveAspectFit
+            //actual image is loaded from list via index provided by coresponding button - not using file name
+            source: "image://provider/foo"
+            cache: false
+            //source needs to be reloaded once it is changed on backend
+            property bool sourceSwitch: true
+            function reload() {
+                if (sourceSwitch) {
+                    sourceSwitch = false
+                    source = "image://provider/foobar"
                 }
-                Connections {
-                    target: imgDatabase
-                    function onIndexChanged() {
-                        image.reload()
-                    }
+                else {
+                    sourceSwitch = true
+                    source = "image://provider/foo"
                 }
             }
-            MouseArea {
-                id: dragArea
-                hoverEnabled: true
-                anchors.fill: parent
-                drag.target: image
-                onWheel: {
-                    var delta = wheel.angleDelta.y / 120.0
-                    imagePane.zoom(delta, image, mouseX, mouseY)
+            Connections {
+                target: imgDatabase
+                function onIndexChanged() {
+                    image.reload()
                 }
             }
         }
-        function zoom(delta, target, x, y) {
+        MouseArea {
+            id: dragArea
+            hoverEnabled: true
+            anchors.fill: parent
+            onWheel: {
+                var delta = wheel.angleDelta.y / 120.0
+                imagePane.zoom(delta, image)
+            }
+        }
+        function zoom(delta, target) {
             // positive delta zoom in, negative delta zoom out
             var zoomFactor = 0.8
             if (delta > 0) {
@@ -209,39 +242,11 @@ Window {
             onTriggered: imgDatabase.clearImages()
         }
     }
-    RowLayout {
+    RotateButtons{
         id: rotateButtons
         width: imagePane.width/2
         anchors.horizontalCenter: imagePane.horizontalCenter; anchors.bottom: parent.bottom
         anchors.top: imagePane.bottom
-        anchors.margins: 4
-        spacing: 15
-        RoundButton {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            text: "<font color='#FFFFFF'>" + "Left" + "</font>"
-            radius: 9
-            palette {
-                button: "dimgray"
-            }
-            onClicked: {
-                imgDatabase.rotateLeft()
-                image.reload()
-            }
-        }
-        RoundButton {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            text: "<font color='#FFFFFF'>" + "Right" + "</font>"
-            radius: 9
-            palette {
-                button: "dimgray"
-            }
-            onClicked: {
-                imgDatabase.rotateRight()
-                image.reload()
-            }
-        }
     }
 
 }

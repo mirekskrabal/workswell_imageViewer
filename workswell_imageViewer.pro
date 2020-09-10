@@ -9,8 +9,8 @@ CONFIG += c++11
 SOURCES += \
         imagedatabase.cpp \
         imagemetadata.cpp \
-        imageprovider.cpp \
-        main.cpp
+        main.cpp \
+        presentationtimer.cpp
 
 RESOURCES += qml.qrc
 
@@ -31,4 +31,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     imagedatabase.h \
     imagemetadata.h \
-    imageprovider.h
+    presentationtimer.h
+
+DISTFILES +=

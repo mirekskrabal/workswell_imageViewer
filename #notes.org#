@@ -15,15 +15,15 @@ Pozn.: Obrazky se budou nacitat do listu QQmlListProperty<>, v grafice bude zobr
  • Nasledne se bude volat metoda pro smazani z listu na urcite pozici.
  • Pomoci praveho tlačítka bude mozne vyvolat kontextove menu a zavrit všechny snímky.
  • Zde bude jeden prvek, který smaze všechny elementy v listu.
- • *Po kliknuti na jmeno se mi obrazek nacte v graficke casti do image.*
- • *Po vybrani Obrazku z listu se mi nacte do QImage, který muze byt implementovany jako extern*
- • *Implementace QImageProvideru –do vlastní tridy.*
- • *QImage se mi za pomoci ImageProvideru zobrazi v grafice v prvku Image.*
- • Bude mozne zmacknout tlacitko a vyvolat prezentaci (po urcite casove době se nacte další snímek z listu).
-   Bude mozne nastavit dobu, za kterou se budou snímky menit.
- • Zde bude implementovany Timer, který se bude spoustet a zastavovat z graficke casti za pomoci tlačítek.
- • Z graficke casti bude mozne nastavit cas ve vteřinách, kde po uplynuti doby se zavola urcity SLOT timeru.
- • Po zavolani metody ve SLOTu se v graficke casti zobrazi další obrazek ze seznamu
+ • Po kliknuti na jmeno se mi obrazek nacte v graficke casti do image.
+ • Po vybrani Obrazku z listu se mi nacte do QImage, který muze byt implementovany jako extern
+ • Implementace QImageProvideru –do vlastní tridy
+ • QImage se mi za pomoci ImageProvideru zobrazi v grafice v prvku Image.
+ • *Bude mozne zmacknout tlacitko a vyvolat prezentaci (po urcite casove době se nacte další snímek z listu).*
+   *Bude mozne nastavit dobu, za kterou se budou snímky menit.*
+ • *Zde bude implementovany Timer, který se bude spoustet a zastavovat z graficke casti za pomoci tlačítek.*
+ • *Z graficke casti bude mozne nastavit cas ve vteřinách, kde po uplynuti doby se zavola urcity SLOT timeru.*
+ • *Po zavolani metody ve SLOTu se v graficke casti zobrazi další obrazek ze seznamu*
  • Priblizovani a odalovani obrazku za pomoci kolecka.
  • Implementace pouziti mysi pro ovladani obrazku, hlavne priblizovani a oddalovani za pomoci kolecka mysi.
  • Pomoci dvou tlačítek bude mozne obrazek rotovat o 90 stupnu doprava ci doleva
@@ -65,11 +65,34 @@ image provider: https://doc.qt.io/qt-5/qquickimageprovider.html
 
 * TODOES 9.9
 ** TODO fix scrollbar over buttons
-** DONE close all buttons using context menu
+** DONE close all buttons using context menu (done 9.9.)
    vyvolat kontextove menu, tam odsouhlasit zavreni vsech obrazku
    zavolat slot v imageProvideru, ktery vymaze vsechny prvky z listu a emituje signal, aby se refreshnul
-   model v table view
-** TODO load image when clicked on image name
+   model v table v
+** TODO use relative sizes of qml objects
+** DONE implementace timeru (done 9.9)
+   pri zmacknuti start:
+     - nekonecne loopovani mezi obrazky v listu s nejakym interval x
+     - loopovat se zacne od ulozeneho indexu, pokud tento ulozen neni, potom se zacne od indexu 0
+     - po uplynuti jednoho intervalu:
+       index v listu se navysi o jedno (pokud neni zrovna posledni, potom se snizi na 0) a do image pane
+       se nahraje novy image
+   pri zmacknuti stop:
+     - pokud timer nebezi, nic se nedeje
+     - pokud bezi, soucasny obrazek bude zobrazovan tak dlouho, dokud nebude znovu zmacknut start
+       a nedobehne zbytek intervalu
+
+** DONE image rotation
+** DONE set index for first image in list when none is beeing viewed
+** TODO remove image from image pane when removing image from image list
+** DONE load image when clicked on image name (done 9.9)
    vyvolat obrazek do graficke casti, pote co je v listu kliknuto na jeho jmeno
    v image database vytvorim qimage z daneho url, tento pomoci signalu poslu do image provideru, ktery zajisti
    zobrazeni v ui
+** TODO make frontend pretty
+** DONE forbid deleting images when in presentation mode
+** DONE when rotating image -> can rotate out of frame
+   rotace obrazku pomoci c++, nikoli qml, upravuji underlying qimage objekt pomoci QImage::transform
+** DONE zoom-in on picture
+** DONE add placeholder image
+** TODO qml cleanup

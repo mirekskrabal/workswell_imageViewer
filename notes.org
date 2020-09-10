@@ -17,13 +17,13 @@ Pozn.: Obrazky se budou nacitat do listu QQmlListProperty<>, v grafice bude zobr
  • Zde bude jeden prvek, který smaze všechny elementy v listu.
  • Po kliknuti na jmeno se mi obrazek nacte v graficke casti do image.
  • Po vybrani Obrazku z listu se mi nacte do QImage, který muze byt implementovany jako extern
- • Implementace QImageProvideru –do vlastní tridy.
+ • Implementace QImageProvideru –do vlastní tridy
  • QImage se mi za pomoci ImageProvideru zobrazi v grafice v prvku Image.
- • Bude mozne zmacknout tlacitko a vyvolat prezentaci (po urcite casove době se nacte další snímek z listu).
-   Bude mozne nastavit dobu, za kterou se budou snímky menit.
- • Zde bude implementovany Timer, který se bude spoustet a zastavovat z graficke casti za pomoci tlačítek.
- • Z graficke casti bude mozne nastavit cas ve vteřinách, kde po uplynuti doby se zavola urcity SLOT timeru.
- • Po zavolani metody ve SLOTu se v graficke casti zobrazi další obrazek ze seznamu
+ • *Bude mozne zmacknout tlacitko a vyvolat prezentaci (po urcite casove době se nacte další snímek z listu).*
+   *Bude mozne nastavit dobu, za kterou se budou snímky menit.*
+ • *Zde bude implementovany Timer, který se bude spoustet a zastavovat z graficke casti za pomoci tlačítek.*
+ • *Z graficke casti bude mozne nastavit cas ve vteřinách, kde po uplynuti doby se zavola urcity SLOT timeru.*
+ • *Po zavolani metody ve SLOTu se v graficke casti zobrazi další obrazek ze seznamu*
  • Priblizovani a odalovani obrazku za pomoci kolecka.
  • Implementace pouziti mysi pro ovladani obrazku, hlavne priblizovani a oddalovani za pomoci kolecka mysi.
  • Pomoci dvou tlačítek bude mozne obrazek rotovat o 90 stupnu doprava ci doleva
@@ -55,11 +55,27 @@ image provider: https://doc.qt.io/qt-5/qquickimageprovider.html
    execution of the code following the emit statement will occur once all slots have returned
    signal emitted from an instance of an arbitrary class can cause a private slot to be invoked in an instance
    of an urelated class
+   
 
+  
+* TODOES 8.9
 ** DONE nacitani ze slozky
 ** DONE odstraneni z table view
 ** DONE fix non-NOTIFYable
-** TODO fix scrollbar over buttons
 
-** conections
-   
+* TODOES 9.9
+** TODO fix scrollbar over buttons
+** DONE close all buttons using context menu
+   vyvolat kontextove menu, tam odsouhlasit zavreni vsech obrazku
+   zavolat slot v imageProvideru, ktery vymaze vsechny prvky z listu a emituje signal, aby se refreshnul
+   model v table view
+** TODO use relative sizes of qml objects
+** TODO implementace timeru
+** TODO image rotation
+** TODO remove image from image pane when removing image from image list
+** DONE load image when clicked on image name
+   vyvolat obrazek do graficke casti, pote co je v listu kliknuto na jeho jmeno
+   v image database vytvorim qimage z daneho url, tento pomoci signalu poslu do image provideru, ktery zajisti
+   zobrazeni v ui
+** TODO fix setting parameters in qml files
+** TODO forbid deleting images when in presentation mode
