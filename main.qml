@@ -131,8 +131,9 @@ Window {
         height: parent.height - presentationButtons.height - 50
         anchors.margins: 15
         color: "black"
+        clip: true
         Image {
-            id: displayedImage
+            id: image
             width: parent.width
             height: parent.height
             anchors.margins: 2
@@ -140,6 +141,7 @@ Window {
             //actual image is loaded from list via index provided by coresponding button - not using file name
             source: "image://provider/foo"
             cache: false
+            //source needs to be reloaded once it is changed on backend
             property bool sourceSwitch: true
             function reload() {
                 if (sourceSwitch) {
@@ -154,9 +156,27 @@ Window {
             Connections {
                 target: imgDatabase
                 function onIndexChanged() {
-                    displayedImage.reload()
+                    image.reload()
                 }
             }
+        }
+        MouseArea {
+            id: dragArea
+            hoverEnabled: true
+            anchors.fill: parent
+            onWheel: {
+                var delta = wheel.angleDelta.y / 120.0
+                imagePane.zoom(delta, image, mouseX, mouseY)
+            }
+        }
+        function zoom(delta, target, x, y) {
+            // positive delta zoom in, negative delta zoom out
+            var zoomFactor = 0.8
+            if (delta > 0) {
+                zoomFactor = 1.0/zoomFactor;
+            }
+            // Zoom the target
+            target.scale = target.scale * zoomFactor;
         }
     }
 
@@ -193,7 +213,7 @@ Window {
             radius: 5
             onClicked: {
                 imgDatabase.rotateLeft()
-                displayedImage.reload()
+                image.reload()
             }
         }
         RoundButton {
@@ -201,7 +221,7 @@ Window {
             radius: 5
             onClicked: {
                 imgDatabase.rotateRight()
-                displayedImage.reload()
+                image.reload()
             }
         }
     }
