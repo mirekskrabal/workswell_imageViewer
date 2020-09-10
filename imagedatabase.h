@@ -14,6 +14,7 @@ class ImageDatabase : public QObject, public QQuickImageProvider
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<ImageMetaData> images READ images NOTIFY imagesChanged)
     QImage m_img;
+    QImage m_placeHolder;
     QList<ImageMetaData *> m_images;
     //stores index of image which should be displayed
     int listIndex;
@@ -53,6 +54,7 @@ public slots:
     void setIndex(int index);
     //rotates currently viewed image right
     void rotateRight();
+    //rotates currently viewed image right
     void rotateLeft();
 };
 
