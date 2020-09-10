@@ -5,6 +5,8 @@ import QtQuick.Controls 2.3
 import Qt.labs.platform 1.1
 import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.3
+import QtQuick.Controls 2.14
+
 
 Window {
     id: imageViewerWindow
@@ -94,19 +96,20 @@ Window {
             role: "str"
             title: "Image Name:"
             width: 170
-            delegate: Button {
+            delegate: LoadButton {
                 width: parent.width
                 text: modelData.name
                 onClicked: {
+                    rotateImage.angle = 0
                     imgDatabase.setIndex(styleData.row)
                 }
             }
         }
         TableViewColumn {
             role: "closeButton"
-            title: ""
+            title: "Del"
             width: 20
-            delegate: Button {
+            delegate: LoadButton {
                 text: "del"
                 onClicked: {
                     imgDatabase.deleteImage(styleData.row)
@@ -126,6 +129,7 @@ Window {
         id: imagePane
         anchors.left: imageNameTable.right; anchors.right: parent.right
         anchors.top: buttonPanel.bottom; anchors.bottom: parent.bottom
+        height: parent.height - presentationButtons.height - 50
         anchors.margins: 15
         color: "black"
         Image {
@@ -141,6 +145,12 @@ Window {
                 var oldSource = source;
                 source = "";
                 source = oldSource;
+            }
+            transform: Rotation {
+                id: rotateImage
+                angle: 0
+                origin.x: imagePane.width/2
+                origin.y: imagePane.height/2
             }
             Connections {
                 target: imgDatabase
@@ -171,6 +181,29 @@ Window {
         MenuItem {
             text: qsTr('Delete all');
             onTriggered: imgDatabase.clearImages()
+        }
+    }
+    RowLayout {
+        id: rotateButtons
+        width: imagePane.width/2
+        anchors.horizontalCenter: imagePane.horizontalCenter; anchors.bottom: parent.bottom
+        anchors.top: imagePane.bottom
+        spacing: 0
+        RoundButton {
+            text: "<font color='#FFFFFF'>" + "Left" + "</font>"
+            radius: 5
+            onClicked: {
+                rotateImage.angle -= 90
+                displayedImage.reload()
+            }
+        }
+        RoundButton {
+            text: "<font color='#FFFFFF'>" + "Right" + "</font>"
+            radius: 5
+            onClicked: {
+                rotateImage.angle += 90
+                displayedImage.reload()
+            }
         }
     }
 }
