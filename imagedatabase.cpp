@@ -5,7 +5,10 @@
 
 ImageDatabase::ImageDatabase(QObject *parent) : QObject(parent),
                                                 QQuickImageProvider(QQuickImageProvider::Image),
-                                                m_images(QList<ImageMetaData *>()){}
+                                                m_images(QList<ImageMetaData *>()),
+                                                m_wasTransformed(false),
+                                                m_rightRotation(0,1,0,-1,0,0,0,0,1),
+                                                m_leftRotation(0,-1,0,1,0,0,0,0,1){}
 
 QQmlListProperty<ImageMetaData> ImageDatabase::images()
 {
@@ -14,9 +17,11 @@ QQmlListProperty<ImageMetaData> ImageDatabase::images()
 
 QImage ImageDatabase::requestImage(const QString &, QSize *, const QSize &requested)
 {
-    if (listIndex < m_images.length() && listIndex >= 0 && !m_images.empty()){
+    if (!m_wasTransformed && listIndex < m_images.length() && listIndex >= 0 && !m_images.empty()){
         m_img = QImage(m_images.at(listIndex)->url().path(), ".jpg");
     }
+    m_wasTransformed = false;
+    qDebug() << "returning image";
     return m_img;
 }
 
@@ -58,5 +63,18 @@ void ImageDatabase::setIndex(int index)
 {
     listIndex = index;
     emit indexChanged(index);
+}
+
+void ImageDatabase::rotateRight()
+{
+    m_wasTransformed = true;
+    m_img = m_img.transformed(m_rightRotation);
+    qDebug() << "transforming";
+}
+
+void ImageDatabase::rotateLeft()
+{
+    m_wasTransformed = true;
+    m_img = m_img.transformed(m_leftRotation);
 }
 

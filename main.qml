@@ -100,7 +100,6 @@ Window {
                 width: parent.width
                 text: modelData.name
                 onClicked: {
-                    rotateImage.angle = 0
                     imgDatabase.setIndex(styleData.row)
                 }
             }
@@ -141,16 +140,16 @@ Window {
             //actual image is loaded from list via index provided by coresponding button - not using file name
             source: "image://provider/foo"
             cache: false
+            property bool sourceSwitch: true
             function reload() {
-                var oldSource = source;
-                source = "";
-                source = oldSource;
-            }
-            transform: Rotation {
-                id: rotateImage
-                angle: 0
-                origin.x: imagePane.width/2
-                origin.y: imagePane.height/2
+                if (sourceSwitch) {
+                    sourceSwitch = false
+                    source = "image://provider/foobar"
+                }
+                else {
+                    sourceSwitch = true
+                    source = "image://provider/foo"
+                }
             }
             Connections {
                 target: imgDatabase
@@ -193,7 +192,7 @@ Window {
             text: "<font color='#FFFFFF'>" + "Left" + "</font>"
             radius: 5
             onClicked: {
-                rotateImage.angle -= 90
+                imgDatabase.rotateLeft()
                 displayedImage.reload()
             }
         }
@@ -201,7 +200,7 @@ Window {
             text: "<font color='#FFFFFF'>" + "Right" + "</font>"
             radius: 5
             onClicked: {
-                rotateImage.angle += 90
+                imgDatabase.rotateRight()
                 displayedImage.reload()
             }
         }

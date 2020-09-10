@@ -21,6 +21,14 @@ class ImageDatabase : public QObject, public QQuickImageProvider
     int imgWidth;
     //stores height of image which should be displayed
     int imgHeight;
+    /*checks if image was transformed, so provider provides currently created qimage
+    doesn't create new one*/
+    bool m_wasTransformed;
+    //transform for ratating images by 90 degrees
+    QTransform m_rightRotation;
+    //transform for ratating images by -90 degrees
+    QTransform m_leftRotation;
+
 public:
     explicit ImageDatabase(QObject *parent = nullptr);
     QQmlListProperty<ImageMetaData> images();
@@ -43,6 +51,9 @@ public slots:
     void clearImages();
     //sets index of image which should be displayed
     void setIndex(int index);
+    //rotates currently viewed image right
+    void rotateRight();
+    void rotateLeft();
 };
 
 #endif // IMAGELOADER_H
