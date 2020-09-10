@@ -127,46 +127,53 @@ Window {
     Rectangle {
         id: imagePane
         anchors.left: imageNameTable.right; anchors.right: parent.right
-        anchors.top: buttonPanel.bottom; anchors.bottom: parent.bottom
-        height: parent.height - presentationButtons.height - 50
+        anchors.top: buttonPanel.bottom;
+        height: parent.height - presentationButtons.height - 40
         anchors.margins: 15
         color: "black"
         clip: true
-        Image {
-            id: image
-            width: parent.width
-            height: parent.height
-            anchors.margins: 2
-            fillMode: Image.PreserveAspectFit
-            //actual image is loaded from list via index provided by coresponding button - not using file name
-            source: "image://provider/foo"
-            cache: false
-            //source needs to be reloaded once it is changed on backend
-            property bool sourceSwitch: true
-            function reload() {
-                if (sourceSwitch) {
-                    sourceSwitch = false
-                    source = "image://provider/foobar"
-                }
-                else {
-                    sourceSwitch = true
-                    source = "image://provider/foo"
-                }
-            }
-            Connections {
-                target: imgDatabase
-                function onIndexChanged() {
-                    image.reload()
-                }
-            }
-        }
-        MouseArea {
-            id: dragArea
-            hoverEnabled: true
+        Flickable {
+            id: flick
             anchors.fill: parent
-            onWheel: {
-                var delta = wheel.angleDelta.y / 120.0
-                imagePane.zoom(delta, image, mouseX, mouseY)
+            boundsBehavior: Flickable.StopAtBounds
+            boundsMovement: Flickable.StopAtBounds
+            Image {
+                id: image
+                width: parent.width
+                height: parent.height
+                anchors.margins: 2
+                fillMode: Image.PreserveAspectFit
+                //actual image is loaded from list via index provided by coresponding button - not using file name
+                source: "image://provider/foo"
+                cache: false
+                //source needs to be reloaded once it is changed on backend
+                property bool sourceSwitch: true
+                function reload() {
+                    if (sourceSwitch) {
+                        sourceSwitch = false
+                        source = "image://provider/foobar"
+                    }
+                    else {
+                        sourceSwitch = true
+                        source = "image://provider/foo"
+                    }
+                }
+                Connections {
+                    target: imgDatabase
+                    function onIndexChanged() {
+                        image.reload()
+                    }
+                }
+            }
+            MouseArea {
+                id: dragArea
+                hoverEnabled: true
+                anchors.fill: parent
+                drag.target: image
+                onWheel: {
+                    var delta = wheel.angleDelta.y / 120.0
+                    imagePane.zoom(delta, image, mouseX, mouseY)
+                }
             }
         }
         function zoom(delta, target, x, y) {
@@ -207,22 +214,34 @@ Window {
         width: imagePane.width/2
         anchors.horizontalCenter: imagePane.horizontalCenter; anchors.bottom: parent.bottom
         anchors.top: imagePane.bottom
-        spacing: 0
+        anchors.margins: 4
+        spacing: 15
         RoundButton {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             text: "<font color='#FFFFFF'>" + "Left" + "</font>"
-            radius: 5
+            radius: 9
+            palette {
+                button: "dimgray"
+            }
             onClicked: {
                 imgDatabase.rotateLeft()
                 image.reload()
             }
         }
         RoundButton {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             text: "<font color='#FFFFFF'>" + "Right" + "</font>"
-            radius: 5
+            radius: 9
+            palette {
+                button: "dimgray"
+            }
             onClicked: {
                 imgDatabase.rotateRight()
                 image.reload()
             }
         }
     }
+
 }
