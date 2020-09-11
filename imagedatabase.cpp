@@ -6,15 +6,23 @@
 ImageDatabase::ImageDatabase(QObject *parent) : QObject(parent),
                                                 QQuickImageProvider(QQuickImageProvider::Image),
                                                 m_images(QList<ImageMetaData *>()),
+                                                listIndex(-1),
                                                 m_wasTransformed(false),
                                                 m_rightRotation(0,1,0,-1,0,0,0,0,1),
                                                 m_leftRotation(0,-1,0,1,0,0,0,0,1)
 {
     //to have a valid placeholder image while no images are beeing displayed
-    QPixmap tmp = QPixmap(1,1);
+    QPixmap tmp = QPixmap(500,500);
     tmp.fill(Qt::black);
     m_placeHolder = tmp.toImage();
     m_img = m_placeHolder;
+}
+
+ImageDatabase::~ImageDatabase()
+{
+    for (auto i : m_images) {
+        delete i;
+    }
 }
 
 QQmlListProperty<ImageMetaData> ImageDatabase::images()
@@ -56,24 +64,27 @@ void ImageDatabase::searchFolder(QUrl path)
 void ImageDatabase::deleteImage(int index)
 {
     m_images.removeAt(index);
+    //no other pictures to load -> set to placeholder
+    if (m_images.empty()){
+        m_img = m_placeHolder;
+        listIndex = 0;
+    }
     //removed picture was the one which was currently beeing displayed -> needed to reload
-    if (index == listIndex) {
-        //no other pictures to load
-        if (m_images.empty()){
-            m_img = m_placeHolder;
-        }
+    if (index == listIndex && listIndex != -1) {
         //image directly below in the table view will be displayed
-        else {
-            //currently displayed image was the first one in the list
-            if (listIndex - 1 < 0) {
-                listIndex = m_images.length() - 1;
-            }
-            else {
-                --listIndex;
-            }
-            m_img = QImage(m_images.at(listIndex)->url().path(), ".jpg");
+        //currently displayed image was the first one in the list
+        if (listIndex - 1 < 0) {
+            listIndex = m_images.length() - 1;
         }
-        emit indexChanged(0);
+        else {
+            --listIndex;
+        }
+    }
+    if (m_images.empty()){
+        emit indexChanged(-1);
+    }
+    else {
+        emit indexChanged(listIndex);
     }
     emit imagesChanged();
 }

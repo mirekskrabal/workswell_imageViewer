@@ -18,10 +18,6 @@ class ImageDatabase : public QObject, public QQuickImageProvider
     QList<ImageMetaData *> m_images;
     //stores index of image which should be displayed
     int listIndex;
-    //stores width of image which should be displayed
-    int imgWidth;
-    //stores height of image which should be displayed
-    int imgHeight;
     /*checks if image was transformed, so provider provides currently created qimage
     doesn't create new one*/
     bool m_wasTransformed;
@@ -32,6 +28,7 @@ class ImageDatabase : public QObject, public QQuickImageProvider
 
 public:
     explicit ImageDatabase(QObject *parent = nullptr);
+    ~ImageDatabase();
     QQmlListProperty<ImageMetaData> images();
 
     QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize) override;
