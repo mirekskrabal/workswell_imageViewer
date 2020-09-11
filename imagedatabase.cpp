@@ -113,3 +113,13 @@ void ImageDatabase::rotateLeft()
     m_img = m_img.transformed(m_leftRotation);
 }
 
+QString ImageDatabase::getImageName()
+{
+    if (m_images.empty()) {
+        return "None";
+    }
+    else {
+        return m_images.at(listIndex)->name();
+    }
+}
+

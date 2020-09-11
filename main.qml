@@ -70,11 +70,10 @@ Window {
             LoadButton{
                 TextField {
                     height: parent.height
-                    width: 2*parent.width/3
-                    placeholderText: qsTr("Time(s):")
+                    placeholderText: qsTr("Set Interval:")
                     validator: IntValidator {bottom: 1; top: 1000}
                     Keys.onReturnPressed: {
-                        timer.startTimer(imageNameTable.rowCount, parseInt(text))
+                        timer.startTimer(imageNameTable.rowCount, parseInt(text), true)
                         text = ""
                     }
                 }
@@ -135,6 +134,7 @@ Window {
                 onClicked: {
                     if (!controlButtons.presentationOn) {
                         imgDatabase.setIndex(styleData.row)
+                        imageName.text = imgDatabase.getImageName()
                     }
                 }
             }
@@ -151,6 +151,7 @@ Window {
                 onClicked: {
                     if (!controlButtons.presentationOn) {
                         imgDatabase.deleteImage(styleData.row)
+                        imageName.text = imgDatabase.getImageName()
                     }
                 }
             }
@@ -163,12 +164,31 @@ Window {
             }
         }
     }
+    RowLayout {
+        id: imageTitle
+        height: 40
+        anchors.horizontalCenter: imagePane.horizontalCenter; anchors.top: buttonPanel
+        width: imagePane.width/2
+        Text {
+            id: imageName
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            text: "Name"
+        }
+        Text {
+            id: imageDate
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            text: "Date"
+        }
+
+    }
 
     Rectangle {
         id: imagePane
         anchors.left: imageNameTable.right; anchors.right: parent.right
-        anchors.top: buttonPanel.bottom;
-        height: parent.height - presentationButtons.height - 40
+        anchors.top: imageTitle.bottom;
+        height: parent.height - presentationButtons.height - 50
         anchors.margins: 15
         color: "black"
         clip: true
