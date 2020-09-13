@@ -2,6 +2,7 @@
 #include <qdiriterator.h>
 #include <qsize.h>
 #include "imagedatabase.h"
+//#include <exiv2>
 
 ImageDatabase::ImageDatabase(QObject *parent) : QObject(parent),
                                                 QQuickImageProvider(QQuickImageProvider::Image),
@@ -12,7 +13,7 @@ ImageDatabase::ImageDatabase(QObject *parent) : QObject(parent),
                                                 m_leftRotation(0,-1,0,1,0,0,0,0,1)
 {
     //to have a valid placeholder image while no images are beeing displayed
-    QPixmap tmp = QPixmap(500,500);
+    QPixmap tmp = QPixmap(1,1);
     tmp.fill(Qt::black);
     m_placeHolder = tmp.toImage();
     m_img = m_placeHolder;
@@ -84,6 +85,9 @@ void ImageDatabase::deleteImage(int index)
         emit indexChanged(-1);
     }
     else {
+        if (index < listIndex){
+            --listIndex;
+        }
         emit indexChanged(listIndex);
     }
     emit imagesChanged();
@@ -115,11 +119,21 @@ void ImageDatabase::rotateLeft()
 
 QString ImageDatabase::getImageName()
 {
-    if (m_images.empty()) {
-        return "None";
+    if (m_images.empty() || listIndex == -1) {
+        return "Name:";
     }
     else {
         return m_images.at(listIndex)->name();
     }
+}
+
+double ImageDatabase::scaledImgWidth(double width, double height)
+{
+    return m_img.width()*std::min(width/m_img.width(), height/m_img.height());
+}
+
+double ImageDatabase::scaledImgHeight(double width, double height)
+{
+    return m_img.height()*std::min(width/m_img.width(), height/m_img.height());
 }
 

@@ -12,10 +12,13 @@ SOURCES += \
         main.cpp \
         presentationtimer.cpp
 
+LIBS += /usr/lib/x86_64-linux-gnu/libexiv2.so.14
+
 RESOURCES += qml.qrc
 
 TRANSLATIONS += \
     workswell_imageViewer_en_US.ts
+
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

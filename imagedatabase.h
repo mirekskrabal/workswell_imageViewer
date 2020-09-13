@@ -53,8 +53,9 @@ public slots:
     void rotateRight();
     //rotates currently viewed image right
     void rotateLeft();
-
     QString getImageName();
+    double scaledImgWidth(double width, double height);
+    double scaledImgHeight(double width, double height);
 };
 
 #endif // IMAGELOADER_H

@@ -31,13 +31,17 @@ Window {
             LoadButton {
                 text: "<font color='#FFFFFF'>" + "Load img" + "</font>"
                 onClicked: {
-                    imageFileDialog.open()
+                    if (!controlButtons.presentationOn) {
+                        imageFileDialog.open()
+                    }
                 }
             }
             LoadButton {
                 text: "<font color='#FFFFFF'>" + "Load folder" + "</font>"
                 onClicked: {
-                    folderFileDialog.open()
+                    if (!controlButtons.presentationOn) {
+                        folderFileDialog.open()
+                    }
                 }
             }
             LoadButton {
@@ -46,6 +50,9 @@ Window {
                     presentationButtons.visible = !presentationButtons.visible
                     timer.toggleIsRunning()
                     controlButtons.presentationOn = !controlButtons.presentationOn
+                    runButton.palette.button = "indianred"
+                    runButton.isRunning = false
+                    remaining.text = "<font color='#FFFFFF'>" + 3 + "</font>"
                 }
             }
         }
@@ -56,25 +63,52 @@ Window {
             anchors.bottom: parent.bottom
             spacing: 0
             LoadButton {
-                text: "<font color='#FFFFFF'>" + "Start" + "</font>"
+                id: runButton
+                text: "<font color='#FFFFFF'>" + "Running" + "</font>"
+                property bool isRunning: false
+                palette.button: "indianred"
                 onClicked: {
-                    timer.startTimer(imageNameTable.rowCount)
+                    if(!isRunning){
+                        isRunning = true;
+                        timer.startTimer(imageNameTable.rowCount);
+                        remainingTime.running = true;
+                        palette.button = "green";
+                    }
+                    else{
+                        isRunning = false;
+                        timer.pauseTimer();
+                        remainingTime.running = false;
+                        palette.button = "indianred";
+                    }
                 }
             }
             LoadButton {
-                text: "<font color='#FFFFFF'>" + "Stop" + "</font>"
-                onClicked: {
-                    timer.pauseTimer();
+                id: remaining
+                property real interval: 3
+                property real timeRemaining: 3
+                text: "<font color='#FFFFFF'>" + interval + "</font>"
+                Timer {
+                    id: remainingTime
+                    interval: 100
+                    running: false
+                    repeat: true
+                    onTriggered: {
+                        remaining.text = "<font color='#FFFFFF'>" + "Remaining: " + Math.round(timer.remainingTime()*10)/10 + "</font>"
+                    }
                 }
             }
             LoadButton{
                 TextField {
                     height: parent.height
+                    width: 5*parent.width/6
                     placeholderText: qsTr("Set Interval:")
                     validator: IntValidator {bottom: 1; top: 1000}
                     Keys.onReturnPressed: {
                         timer.startTimer(imageNameTable.rowCount, parseInt(text), true)
+                        remaining.interval = parseInt(text)
                         text = ""
+                        runButton.isRunning = true
+                        runButton.palette.button = "green"
                     }
                 }
             }
@@ -122,6 +156,7 @@ Window {
             }
         }
         TableViewColumn {
+            id: nameCol
             role: "str"
             title: "Image Name:"
             width: 160
@@ -151,7 +186,6 @@ Window {
                 onClicked: {
                     if (!controlButtons.presentationOn) {
                         imgDatabase.deleteImage(styleData.row)
-                        imageName.text = imgDatabase.getImageName()
                     }
                 }
             }
@@ -166,20 +200,26 @@ Window {
     }
     RowLayout {
         id: imageTitle
-        height: 40
-        anchors.horizontalCenter: imagePane.horizontalCenter; anchors.top: buttonPanel
+        height: 15
+        anchors.horizontalCenter: imagePane.horizontalCenter; anchors.top: buttonPanel.bottom
         width: imagePane.width/2
         Text {
             id: imageName
+            clip: true
             Layout.fillWidth: true
             Layout.fillHeight: true
-            text: "Name"
+            color: "white"
+            font.pixelSize: 12
+            text: "Name:"
         }
         Text {
             id: imageDate
+            clip: true
             Layout.fillWidth: true
             Layout.fillHeight: true
-            text: "Date"
+            color: "white"
+            font.pixelSize: 12
+            text: "Date:"
         }
 
     }
@@ -188,7 +228,7 @@ Window {
         id: imagePane
         anchors.left: imageNameTable.right; anchors.right: parent.right
         anchors.top: imageTitle.bottom;
-        height: parent.height - presentationButtons.height - 50
+        height: parent.height - presentationButtons.height - 55
         anchors.margins: 15
         color: "black"
         clip: true
@@ -196,13 +236,21 @@ Window {
             id: image
             width: parent.width
             height: parent.height
-//            anchors.margins: 2
             fillMode: Image.PreserveAspectFit
             //actual image is loaded from list via index provided by coresponding button - not using file name
             source: "image://provider/foo"
             cache: false
+            //how scaled the image is
+            property real scaleFactor: 1
+            property int scaledImageWidth: 0
+            property int scaledImageHeight: 0
+            //the furthest y coor from origin until first zoom out
+            property int maxY: 0
+            property int maxX: 0
             //source needs to be reloaded once it is changed on backend
             property bool sourceSwitch: true
+            //to not update maxs when moving to the origin
+            property bool toOrigin: false
             function reload() {
                 if (sourceSwitch) {
                     sourceSwitch = false
@@ -212,7 +260,28 @@ Window {
                     sourceSwitch = true
                     source = "image://provider/foo"
                 }
+                imageName.text = imgDatabase.getImageName()
+                image.scaledImageWidth = imgDatabase.scaledImgWidth(image.width, image.height);
+                image.scaledImageHeight = imgDatabase.scaledImgHeight(image.width, image.height);
             }
+            onWidthChanged: {
+                image.scaledImageWidth = imgDatabase.scaledImgWidth(image.width, image.height);
+
+            }
+            onHeightChanged: {
+                image.scaledImageHeight = imgDatabase.scaledImgHeight(image.width, image.height);
+            }
+            onXChanged: {
+                if (!toOrigin){
+                maxX = x
+                }
+            }
+            onYChanged: {
+                if (!toOrigin) {
+                    maxY = y
+                }
+            }
+
             Connections {
                 target: imgDatabase
                 function onIndexChanged() {
@@ -224,19 +293,77 @@ Window {
             id: dragArea
             hoverEnabled: true
             anchors.fill: parent
+            drag.target: image
+            drag.maximumX: 0
+            drag.minimumX: 0
+            drag.minimumY: 0
+            drag.maximumY: 0
             onWheel: {
                 var delta = wheel.angleDelta.y / 120.0
                 imagePane.zoom(delta, image)
             }
+
         }
         function zoom(delta, target) {
             // positive delta zoom in, negative delta zoom out
-            var zoomFactor = 0.8
+            var scaleFactor = 0.9
             if (delta > 0) {
-                zoomFactor = 1.0/zoomFactor;
+                scaleFactor = 1.0/scaleFactor;
             }
-            // Zoom the target
-            target.scale = target.scale * zoomFactor;
+            //limit max and min zoom
+            if (image.scaleFactor*scaleFactor > 0.2 && image.scaleFactor*scaleFactor < 10) {
+                target.scale *= scaleFactor;
+                image.scaleFactor *= scaleFactor;
+                if (delta > 0) {
+                    image.maxX = image.x
+                    image.maxY = image.y
+                }
+            }
+            calculateMaxDrag();
+            fixZoomOutPos();
+
+        }
+        //ensures that image will fill imagePane while possible during zooming out
+        function fixZoomOutPos() {
+            if (Math.sign(image.y) == -1) {
+                if (image.y < dragArea.drag.minimumY){
+                    image.y = dragArea.drag.minimumY
+                }
+            }
+            else{
+                if (image.y > dragArea.drag.maximumY) {
+                    image.y = dragArea.drag.maximumY
+                }
+            }
+            if (Math.sign(image.x) == -1) {
+                if (image.x < dragArea.drag.minimumX){
+                    image.x = dragArea.drag.minimumX
+                }
+            }
+            else{
+                if (image.x > dragArea.drag.maximumX) {
+                    image.x = dragArea.drag.maximumX
+                }
+            }
+        }
+        //calculates the furthest distance image can be dragged so it still fills the image pane
+        function calculateMaxDrag() {
+            if (image.scaledImageHeight*image.scaleFactor - imagePane.height > 0) {
+                dragArea.drag.maximumY = (image.scaledImageHeight*image.scaleFactor - imagePane.height)/2;
+                dragArea.drag.minimumY = -(image.scaledImageHeight*image.scaleFactor - imagePane.height)/2;
+            }
+            else {
+                dragArea.drag.maximumY = 0;
+                dragArea.drag.minimumY = 0;
+            }
+            if (image.scaledImageWidth*image.scaleFactor - imagePane.width > 0) {
+                dragArea.drag.maximumX = (image.scaledImageWidth*image.scaleFactor - imagePane.width)/2;
+                dragArea.drag.minimumX = -(image.scaledImageWidth*image.scaleFactor - imagePane.width)/2;
+            }
+            else {
+                dragArea.drag.maximumX = 0;
+                dragArea.drag.minimumX = 0;
+            }
         }
     }
 

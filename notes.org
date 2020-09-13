@@ -71,11 +71,20 @@ image provider: https://doc.qt.io/qt-5/qquickimageprovider.html
    model v table view
 ** TODO use relative sizes of qml objects
 ** TODO implementace timeru
-** TODO image rotation
+** DONE image rotation
 ** TODO remove image from image pane when removing image from image list
 ** DONE load image when clicked on image name
    vyvolat obrazek do graficke casti, pote co je v listu kliknuto na jeho jmeno
    v image database vytvorim qimage z daneho url, tento pomoci signalu poslu do image provideru, ktery zajisti
    zobrazeni v ui
 ** TODO fix setting parameters in qml files
-** TODO forbid deleting images when in presentation mode
+** DONE forbid deleting images when in presentation mode
+* TODOES 10.9
+** TODO fix memory leak
+** TODO zoom to side
+** TODO currently viewed image highlight
+** TODO time remaining
+** DONE when last img deleted -> display placeholder
+** DONE set new interval when in presentation
+** TODO 3d party lib to show img date
+** DONE show currently displayed image name

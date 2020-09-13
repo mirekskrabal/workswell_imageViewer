@@ -10,14 +10,19 @@ PresentationTimer::PresentationTimer(QObject *parent) : QObject(parent),
                                                         m_timeRemaining(0),
                                                         m_timer(new QTimer(this)){}
 
+PresentationTimer::~PresentationTimer()
+{
+    delete m_timer;
+}
+
 void PresentationTimer::onIndexChanged(int index)
 {
     m_index = index;
 }
 
-void PresentationTimer::startTimer(int items, int sec)
+void PresentationTimer::startTimer(int items, int sec, bool fromInterval)
 {
-    if (!m_isRunning && items > 0) {
+    if ((!m_isRunning || fromInterval) && items > 0) {
         if (m_index == -1){
             //no img is beeing viewed -> emit signal to view the first one
             emit displayAnotherImg(0);
@@ -41,6 +46,7 @@ void PresentationTimer::toggleIsRunning()
 {
     m_isRunning = false;
     m_timer->stop();
+    m_timeRemaining = 3000;
 }
 
 void PresentationTimer::onNotified()
@@ -67,5 +73,15 @@ void PresentationTimer::pauseTimer()
         m_timeRemaining = m_timer->remainingTime();
         m_timer->stop();
         m_wasStopped = true;
+    }
+}
+
+double PresentationTimer::remainingTime()
+{
+    if (!m_timer->isActive()){
+        return (double)m_timeRemaining/1000;
+    }
+    else{
+        return (double)m_timer->remainingTime()/1000;
     }
 }

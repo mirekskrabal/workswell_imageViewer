@@ -22,6 +22,7 @@ class PresentationTimer : public QObject
     int m_timeRemaining;
 public:
     explicit PresentationTimer(QObject *parent = nullptr);
+    ~PresentationTimer();
     QTimer *m_timer;
 signals:
     //notifies database about which img should be displayed
@@ -29,13 +30,14 @@ signals:
 public slots:
     //to be able to continue with next image to the one which is currently beeing displayed
     void onIndexChanged(int index);
-    void startTimer(int items = 0, int sec = 3);
+    void startTimer(int items = 0, int sec = 3, bool fromTimer = false);
     //toggle timer off when quitting presentation mode
     void toggleIsRunning();
     //notified by timer to change an image
     void onNotified();
     //pause using stop button from ui
     void pauseTimer();
+    double remainingTime();
 };
 
 #endif // PRESENTATIONTIMER_H
